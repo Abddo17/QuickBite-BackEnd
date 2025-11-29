@@ -10,6 +10,9 @@ use App\Http\Controllers\API\CommandeController;
 use App\Http\Controllers\API\UtilisateurController;
 use App\Http\Controllers\API\PanierController;
 use App\Http\Controllers\API\StripeController;
+use App\Http\Controllers\API\ContactController;
+use App\Http\Controllers\API\NewsletterController;
+
 use App\Http\Resources\UserResource;
 
 
@@ -28,6 +31,9 @@ Route::get('/commentaires/{commentaire}', [CommentaireController::class, 'show']
 // all ressource route for ctegory comments
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{categorie}', [CategoryController::class, 'show']);
+// Mail route
+Route::post('/contact/send', [ContactController::class, 'send']);
+Route::post('/contact/subscribe', [NewsletterController::class, 'subscribe']);
 
 
 // All the route that needs authentication
