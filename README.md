@@ -752,7 +752,7 @@ This project is open-sourced software licensed under the [MIT License](https://o
 
 ## 👥 Authors
 
--   **Abdelilah** - [YourGitHub](https://github.com/Abddo17)
+-   **Abdelilah** - [GitHub](https://github.com/Abddo17)
 
 ---
 
