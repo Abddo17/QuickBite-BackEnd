@@ -19,7 +19,7 @@ return [
 
   'allowed_methods' => ['*'],
 
-  'allowed_origins' => [env('FRONTEND_URL', 'https://quick-bite-front-end.vercel.app')],
+  'allowed_origins' => [env('FRONTEND_URL', 'https://quick-bite-front-end-obae.vercel.app')],
 
   'allowed_origins_patterns' => [],
 
