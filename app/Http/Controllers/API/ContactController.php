@@ -3,11 +3,18 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
+use App\Services\BrevoService;
 
 class ContactController extends Controller
 {
+  protected $brevoService;
+
+  public function __construct(BrevoService $brevoService)
+  {
+    $this->brevoService = $brevoService;
+  }
+
   public function send(Request $request)
   {
     $data = $request->validate([
@@ -23,14 +30,32 @@ class ContactController extends Controller
             {$data['message']}
         ";
 
-    Mail::html($html, function ($msg) use ($data) {
-      $msg->to(env('ADMIN_EMAIL'))
-        ->subject("New Contact Form Message from {$data['name']}");
-    });
+    $adminEmail = env('ADMIN_EMAIL');
 
-    return response()->json([
-      'success' => true,
-      'message' => 'Message sent successfully.',
-    ]);
+    if (!$adminEmail) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Admin email is not configured.',
+      ], 500);
+    }
+
+    try {
+      $this->brevoService->sendEmail(
+        $adminEmail,
+        'Admin',
+        "New Contact Form Message from {$data['name']}",
+        $html
+      );
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Message sent successfully.',
+      ]);
+    } catch (\Exception $e) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Failed to send message. Please try again later.',
+      ], 500);
+    }
   }
 }

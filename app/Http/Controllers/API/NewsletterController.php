@@ -4,10 +4,17 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use App\Services\BrevoService;
 
 class NewsletterController extends Controller
 {
+  protected $brevoService;
+
+  public function __construct(BrevoService $brevoService)
+  {
+    $this->brevoService = $brevoService;
+  }
+
   public function subscribe(Request $request)
   {
     $data = $request->validate([
@@ -17,14 +24,32 @@ class NewsletterController extends Controller
     $html = "<p>New newsletter subscription:</p>
                  <p>Email: {$data['email']}</p>";
 
-    Mail::html($html, function ($msg) use ($data) {
-      $msg->to(env('ADMIN_EMAIL'))
-        ->subject("New Newsletter Subscription");
-    });
+    $adminEmail = env('ADMIN_EMAIL');
 
-    return response()->json([
-      'success' => true,
-      'message' => 'Thank you! You have been subscribed.'
-    ]);
+    if (!$adminEmail) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Admin email is not configured.',
+      ], 500);
+    }
+
+    try {
+      $this->brevoService->sendEmail(
+        $adminEmail,
+        'Admin',
+        "New Newsletter Subscription",
+        $html
+      );
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Thank you! You have been subscribed.'
+      ]);
+    } catch (\Exception $e) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Failed to subscribe. Please try again later.',
+      ], 500);
+    }
   }
 }

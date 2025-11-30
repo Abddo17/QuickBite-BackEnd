@@ -41,4 +41,10 @@ return [
     'secret' => env('STRIPE_SECRET'),
   ],
 
+  'brevo' => [
+    'api_key' => env('BREVO_API_KEY'),
+    'from_email' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+    'from_name' => env('MAIL_FROM_NAME', 'Example'),
+  ],
+
 ];
